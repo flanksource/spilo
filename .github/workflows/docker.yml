@@ -1,0 +1,18 @@
+name: Publish Docker
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: "Update scm-data"
+        run: 'echo {\"url\": \"git:https://github.com/flanksource/spilo.git\","revision": \"$GITHUB_SHA\",\"author\": \"$GITHUB_ACTOR\", \"status\": \"\"} > postgres-appliance/scm-source.json'
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: flanksource/spilo
+          username: ${{ secrets.DOCKER_LOGIN }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          workdir: postgres-appliance
+          tag_names: true
+          snapshot: true
